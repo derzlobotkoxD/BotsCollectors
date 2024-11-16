@@ -5080,6 +5080,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74c1f17df6d93b149aa69c7f33e4706b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _databaseOfResources: {fileID: 0}
   _cooldown: 2
   _radius: 40
   _effect: {fileID: 8076666654370276369}
@@ -5098,8 +5099,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e32e1a3018938643b4391caada06ad1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _startingDroneCount: 3
+  _startingDroneCount: 1
   _spawnerDrone: {fileID: 0}
+  _databaseOfResources: {fileID: 0}
   _radiusSpawnZone: 1.5
 --- !u!135 &6540735299518624904
 SphereCollider:

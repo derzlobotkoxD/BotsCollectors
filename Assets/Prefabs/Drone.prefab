@@ -123,7 +123,7 @@ MonoBehaviour:
   _layerMask:
     serializedVersion: 2
     m_Bits: 128
-  _animation: {fileID: 2960041381762571204}
+  _animator: {fileID: 2960041381762571204}
   _cargoCompartment: {fileID: 6444701087868122855}
 --- !u!114 &2960041381762571204
 MonoBehaviour:
@@ -138,8 +138,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animator: {fileID: 4427054711713684234}
-  _takeResourceClip: {fileID: 7400000, guid: 2f6a9a14bb039e841a4d651e105f6c0b, type: 2}
-  _timeEventTakeResource: 0.5
 --- !u!1 &4720715881744929394
 GameObject:
   m_ObjectHideFlags: 0

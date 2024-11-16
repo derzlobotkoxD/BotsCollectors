@@ -6,9 +6,9 @@ public class BaseHome : MonoBehaviour
 {
     [SerializeField] private int _startingDroneCount = 3;
     [SerializeField] private SpawnerDrone _spawnerDrone;
+    [SerializeField] private DatabaseOfResources _databaseOfResources; 
     [SerializeField] private float _radiusSpawnZone;
 
-    private Scanner _scanner;
     private ScoreCounter _counter;
     private Queue<Drone> _drones = new Queue<Drone>();
 
@@ -17,7 +17,6 @@ public class BaseHome : MonoBehaviour
 
     private void Start()
     {
-        _scanner = GetComponent<Scanner>();
         _counter = GetComponent<ScoreCounter>();
 
         for (int i = 0; i < _startingDroneCount; i++)
@@ -26,12 +25,11 @@ public class BaseHome : MonoBehaviour
 
     private void Update()
     {
-        if (_scanner.CountFound > 0 && _drones.Count > 0)
+        if (_databaseOfResources.CountFoundResources > 0 && _drones.Count > 0)
         {
-            if (_scanner.TryGetFoundResource(out Resource resource))
+            if (_databaseOfResources.TryGetFoundResource(out Resource resource))
             {
                 Drone drone = _drones.Dequeue();
-                resource.Mark();
                 drone.DeliverResource(resource);
             }
         }
@@ -58,9 +56,8 @@ public class BaseHome : MonoBehaviour
         Vector3 position = GetRandomSpawnPosition();
         Drone drone = _spawnerDrone.GetInstance(position);
         drone.SetBase(this);
-        _drones.Enqueue(drone);
+        AddDrone(drone);
     }
-
 
     private Vector3 GetRandomSpawnPosition()
     {

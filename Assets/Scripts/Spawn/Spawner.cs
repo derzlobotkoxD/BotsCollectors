@@ -25,7 +25,7 @@ public abstract class Spawner<T> : MonoBehaviour where T : Component
     public T GetInstance(Vector3 position)
     {
         _spawnPoint = position;
-        _pool.Get(out T resource);
+        T resource = _pool.Get();
 
         return resource;
     }

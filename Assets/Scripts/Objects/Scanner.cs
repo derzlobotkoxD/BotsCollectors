@@ -4,19 +4,14 @@ using UnityEngine;
 
 public class Scanner : MonoBehaviour
 {
+    [SerializeField] private DatabaseOfResources _databaseOfResources;
     [SerializeField] private float _cooldown;
     [SerializeField] private float _radius;
     [SerializeField] private ParticleSystem _effect;
     [SerializeField] private LayerMask _layerMask;
 
-    private Queue<Resource> _foundResources = new Queue<Resource>();
-
-    public int CountFound => _foundResources.Count;
-
-    private void Start()
-    {
+    private void Start() =>
         StartCoroutine(Scan());
-    }
 
     private IEnumerator Scan()
     {
@@ -24,32 +19,22 @@ public class Scanner : MonoBehaviour
 
         while (enabled)
         {
-            Collider[] colliders = Physics.OverlapSphere(transform.position, _radius, _layerMask);
-            _effect.Play();
-
-            foreach (Collider collider in colliders)
-                if (collider.TryGetComponent(out Resource recource) && _foundResources.Contains(recource) == false)
-                    _foundResources.Enqueue(recource);
-
+            _databaseOfResources.SetFoundResources(SearchResources());
             yield return wait;
         }
     }
 
-    public bool TryGetFoundResource(out Resource resource)
+    private List<Resource> SearchResources()
     {
-        resource = _foundResources.Dequeue();
+        List<Resource> foundResources = new List<Resource>();
+        Collider[] colliders = Physics.OverlapSphere(transform.position, _radius, _layerMask);
 
-        while (resource.IsMarked)
-        {
-            if (_foundResources.Count == 0)
-            {
-                resource = null;
-                return false;
-            }
+        _effect.Play();
 
-            resource = _foundResources.Dequeue();
-        }
+        foreach (Collider collider in colliders)
+            if (collider.TryGetComponent(out Resource recource))
+                foundResources.Add(recource);
 
-        return true;
+        return foundResources;
     }
 }
