@@ -14,6 +14,8 @@ public class Drone : MonoBehaviour
     private Resource _resource;
     private BaseHome _base;
 
+    public event Action<Drone> DeliveredResource;
+
     private void OnEnable()
     {
         _animator.FinishedGoingDown += AddResourceToCargo;
@@ -52,7 +54,7 @@ public class Drone : MonoBehaviour
         Vector3 direction = target - transform.position;
         direction.y = 0f;
 
-        while ((direction.normalized - transform.forward.normalized).magnitude > 0.01f)
+        while ((direction.normalized - transform.forward.normalized).sqrMagnitude > 0.01f)
         {
             Vector3 newDirection = Vector3.RotateTowards(transform.forward, direction, _rotateSpeed * Time.deltaTime, 0f);
             transform.rotation = Quaternion.LookRotation(newDirection);
@@ -106,12 +108,7 @@ public class Drone : MonoBehaviour
             _resource = null;
         }
 
-        ComebackToBaseHome();
-    }
-
-    private void ComebackToBaseHome()
-    {
-        _base.AddDrone(this);
         _animator.Idle();
+        DeliveredResource?.Invoke(this);
     }
 }

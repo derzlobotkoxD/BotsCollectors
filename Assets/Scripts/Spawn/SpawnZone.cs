@@ -1,13 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
 using UnityEngine;
 
 public class SpawnZone : MonoBehaviour
 {
     [SerializeField] private SpawnerResources _spawner;
-    [SerializeField] private int _rejectionSamples = 20;
-    [SerializeField][Range(1f, 6f)] private float _distanceBetweenPoints = 1;
+    [SerializeField] private GeneraterSpawnPoint _generatorSpawnPoint;
     [SerializeField][Range(0.1f, 3f)] private float _delay = 1f;
     [SerializeField] private LayerMask _mask;
     
@@ -21,7 +19,7 @@ public class SpawnZone : MonoBehaviour
 
         Vector3 offset = transform.position - transform.lossyScale / divider;
         Vector2 zoneSize = new Vector2(transform.localScale.x, transform.localScale.z);
-        _points = GeneraterSpawnPoint.GeneratePoints(_distanceBetweenPoints, offset, zoneSize, _rejectionSamples);
+        _points = _generatorSpawnPoint.GeneratePoints(offset, zoneSize);
 
         StartCoroutine(SpawnWithDelay(_delay));
     }

@@ -1,14 +1,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class GeneraterSpawnPoint
+public class GeneraterSpawnPoint : MonoBehaviour
 {
-    public static List<Vector3> GeneratePoints(float radius, Vector3 offset, Vector2 sampleRegionSize, int numberSamplesBeforeRejection = 30)
+    [SerializeField] private int _numberSamplesBeforeRejections = 20;
+    [SerializeField][Range(1f, 6f)] private float _radiuseBetweenPoints = 1;
+
+    public List<Vector3> GeneratePoints(Vector3 offset, Vector2 sampleRegionSize)
     {
         int multiplier = 2;
         Vector2 startPoint = sampleRegionSize / 2;
 
-        float cellSize = radius / Mathf.Sqrt(multiplier);
+        float cellSize = _radiuseBetweenPoints / Mathf.Sqrt(multiplier);
 
         int[,] grid = new int[Mathf.CeilToInt(sampleRegionSize.x / cellSize), Mathf.CeilToInt(sampleRegionSize.y / cellSize)];
         List<Vector2> points = new List<Vector2>();
@@ -22,13 +25,13 @@ public static class GeneraterSpawnPoint
             Vector2 spawnCenter = spawnPoints[spawnIndex];
             bool isCandidateAccepted = false;
 
-            for (int i = 0; i < numberSamplesBeforeRejection; i++)
+            for (int i = 0; i < _numberSamplesBeforeRejections; i++)
             {
                 float angle = Random.value * Mathf.PI * multiplier;
                 Vector2 direction = new Vector2(Mathf.Sin(angle), Mathf.Cos(angle));
-                Vector2 candidate = spawnCenter + direction * Random.Range(radius, multiplier * radius);
+                Vector2 candidate = spawnCenter + direction * Random.Range(_radiuseBetweenPoints, multiplier * _radiuseBetweenPoints);
 
-                if (IsValid(candidate, sampleRegionSize, cellSize, radius, points, grid))
+                if (IsValid(candidate, sampleRegionSize, cellSize, _radiuseBetweenPoints, points, grid))
                 {
                     points.Add(candidate);
                     spawnPoints.Add(candidate);
@@ -45,7 +48,7 @@ public static class GeneraterSpawnPoint
         return ConvertToVector3(points, offset);
     }
 
-    private static bool IsValid(Vector2 candidate, Vector2 sampleRegionSize, float cellSize, float radius, List<Vector2> points, int[,] grid)
+    private bool IsValid(Vector2 candidate, Vector2 sampleRegionSize, float cellSize, float radius, List<Vector2> points, int[,] grid)
     {
         if (candidate.x >= 0 && candidate.x < sampleRegionSize.x && candidate.y >= 0 && candidate.y < sampleRegionSize.y)
         {
@@ -66,9 +69,9 @@ public static class GeneraterSpawnPoint
 
                     if (pointIndex != -1)
                     {
-                        float distance = (candidate - points[pointIndex]).magnitude;
+                        float sqrDistance = (candidate - points[pointIndex]).sqrMagnitude;
 
-                        if (distance < radius)
+                        if (sqrDistance < radius * radius)
                             return false;
                     }
                 }
@@ -80,7 +83,7 @@ public static class GeneraterSpawnPoint
         return false;
     }
 
-    private static List<Vector3> ConvertToVector3(List<Vector2> points, Vector3 offset)
+    private List<Vector3> ConvertToVector3(List<Vector2> points, Vector3 offset)
     {
         List<Vector3> convertedPoints = new List<Vector3>();
 

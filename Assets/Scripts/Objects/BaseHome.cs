@@ -23,6 +23,12 @@ public class BaseHome : MonoBehaviour
             CreateDrone();
     }
 
+    private void OnDisable()
+    {
+        foreach (var drone in _drones)
+            drone.DeliveredResource -= AddDrone;
+    }
+
     private void Update()
     {
         if (_databaseOfResources.CountFoundResources > 0 && _drones.Count > 0)
@@ -45,11 +51,8 @@ public class BaseHome : MonoBehaviour
         }
     }
 
-    public void AddDrone(Drone drone)
-    {
-        if (drone != null)
-            _drones.Enqueue(drone);
-    }
+    private void AddDrone(Drone drone) =>
+        _drones.Enqueue(drone);
 
     private void CreateDrone()
     {
@@ -57,6 +60,7 @@ public class BaseHome : MonoBehaviour
         Drone drone = _spawnerDrone.GetInstance(position);
         drone.SetBase(this);
         AddDrone(drone);
+        drone.DeliveredResource += AddDrone;
     }
 
     private Vector3 GetRandomSpawnPosition()

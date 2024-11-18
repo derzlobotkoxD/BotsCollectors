@@ -3,9 +3,9 @@ using UnityEngine;
 
 public class ScoreView : MonoBehaviour
 {
-    [SerializeField] ScoreCounter _scoreCounter;
-    [SerializeField] TMP_Text _scorePrefab;
-    [SerializeField] Transform _parentForText;
+    [SerializeField] private ScoreCounter _scoreCounter;
+    [SerializeField] private TMP_Text _scorePrefab;
+    [SerializeField] private Transform _parentForText;
     [SerializeField] private Vector3 _offset;
     [SerializeField] private Vector3 _rotate;
 
