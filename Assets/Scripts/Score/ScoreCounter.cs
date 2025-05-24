@@ -7,9 +7,12 @@ public class ScoreCounter : MonoBehaviour
 
     public event UnityAction<int> ScoreChanged;
 
-    public void Add()
+    public void Change(int value)
     {
-        _value++;
+        if (value < 0)
+            return;
+
+        _value = value;
         ScoreChanged?.Invoke(_value);
     }
 }

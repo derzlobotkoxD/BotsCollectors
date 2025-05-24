@@ -12,9 +12,7 @@ public class Drone : MonoBehaviour
 
     private float _rayMaxDistance = 5f;
     private Resource _resource;
-    private BaseHome _base;
-
-    public event Action<Drone> DeliveredResource;
+    private Basehome _basehome;
 
     private void OnEnable()
     {
@@ -28,25 +26,44 @@ public class Drone : MonoBehaviour
         _animator.FinishedGoingUp -= MoveToBase;
     }
 
-    public void SetBase(BaseHome baseHome) =>
-        _base = baseHome;
+    public void SetBase(Basehome baseHome) =>
+        _basehome = baseHome;
 
     public void DeliverResource(Resource resource) =>
         StartCoroutine(GoToAction(resource.transform.position, TakeResource));
 
+    public void DeliverNewBasehome(Flag flag, SpawnerBasehome spawner) =>
+        StartCoroutine(GoToFlag(flag, spawner));
 
     private void MoveToBase()
     {
-        Vector3 direction = (transform.position - _base.transform.position).normalized;
-        Vector3 targetPosition = _base.transform.position + direction * _base.RadiusSpawnZone;
+        Vector3 direction = (transform.position - _basehome.transform.position).normalized;
+        Vector3 targetPosition = _basehome.transform.position + direction * _basehome.RadiusSpawnZone;
         StartCoroutine(GoToAction(targetPosition, PutIntoBaseHome));
     }
 
     private IEnumerator GoToAction(Vector3 target, Action action)
     {
+        yield return GoTo(target);
+        action();
+    }
+
+    private IEnumerator GoTo(Vector3 target)
+    {
         yield return RotateTo(target);
         yield return MoveTo(target);
-        action();
+    }
+
+    private IEnumerator GoToFlag(Flag flag, SpawnerBasehome spawner)
+    {
+        Vector3 target = flag.transform.position;
+
+        yield return GoTo(target);
+
+        flag.Deactivate();
+        _basehome = spawner.GetInstance(target);
+        _basehome.AddDrone(this);
+        _animator.Idle();
     }
 
     private IEnumerator RotateTo(Vector3 target)
@@ -77,7 +94,9 @@ public class Drone : MonoBehaviour
 
     private void TakeResource()
     {
-        if (Physics.Raycast(transform.position + Vector3.down, Vector3.up, out RaycastHit hit, _rayMaxDistance, _layerMask))
+        Vector3 rayStartPosition = transform.position + Vector3.down;
+
+        if (Physics.Raycast(rayStartPosition, Vector3.up, out RaycastHit hit, _rayMaxDistance, _layerMask))
         {
             if (hit.collider.TryGetComponent(out Resource resource))
             {
@@ -104,11 +123,11 @@ public class Drone : MonoBehaviour
         if (_resource != null)
         {
             _resource.transform.SetParent(null);
-            _base.AddResource(_resource);
+            _basehome.AddResource(_resource);
             _resource = null;
         }
 
         _animator.Idle();
-        DeliveredResource?.Invoke(this);
+        _basehome.ReturnDrone(this);
     }
 }

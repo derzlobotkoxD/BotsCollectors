@@ -22,7 +22,7 @@ public abstract class Spawner<T> : MonoBehaviour where T : Component
             maxSize: _maxSizePool);
     }
 
-    public T GetInstance(Vector3 position)
+    public T GetInstance(Vector3 position) 
     {
         _spawnPoint = position;
         T resource = _pool.Get();

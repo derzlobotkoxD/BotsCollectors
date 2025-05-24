@@ -4,14 +4,22 @@ using UnityEngine;
 
 public class Scanner : MonoBehaviour
 {
-    [SerializeField] private DatabaseOfResources _databaseOfResources;
     [SerializeField] private float _cooldown;
     [SerializeField] private float _radius;
     [SerializeField] private ParticleSystem _effect;
     [SerializeField] private LayerMask _layerMask;
 
-    private void Start() =>
-        StartCoroutine(Scan());
+    private DatabaseOfResources _databaseOfResources;
+    private Coroutine _coroutine;
+
+    public void Activate()
+    {
+        if (_coroutine == null)
+            _coroutine = StartCoroutine(Scan());
+    }
+
+    public void SetDatabaseOfResources(DatabaseOfResources database) =>
+        _databaseOfResources = database;
 
     private IEnumerator Scan()
     {
