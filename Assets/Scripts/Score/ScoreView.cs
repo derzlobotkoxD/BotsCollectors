@@ -12,10 +12,10 @@ public class ScoreView : MonoBehaviour
     private RectTransform _positionScore;
 
     private void OnEnable() =>
-        _scoreCounter.ScoreChanged += Change;
+        _scoreCounter.Changed += Change;
 
     private void OnDisable() =>
-        _scoreCounter.ScoreChanged -= Change;
+        _scoreCounter.Changed -= Change;
 
     public void StartShow() =>
         _score = Instantiate(_scorePrefab, transform.position + _offset, Quaternion.Euler(_rotate), _positionScore);

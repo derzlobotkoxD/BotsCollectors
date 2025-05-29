@@ -16,8 +16,11 @@ public class Resource : MonoBehaviour
         transform.rotation = Quaternion.identity;
     }
 
-    public void Delete() =>
+    public void Delete()
+    {
+        transform.SetParent(null);
         Deleted?.Invoke(this);
+    }
 
     public void BecomeKinemetric() =>
         _rigidbody.isKinematic = true;

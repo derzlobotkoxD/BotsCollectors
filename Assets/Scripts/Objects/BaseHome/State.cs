@@ -2,16 +2,16 @@ using System;
 
 public class State
 {
-    private Action Action;
-
-    public int Price { get; private set; }
+    private Action _action;
 
     public State(Action action, int price)
     {
-        Action = action;
+        _action = action;
         Price = price;
     }
 
+    public int Price { get; private set; }
+
     public void Build() =>
-        Action();
+        _action();
 }

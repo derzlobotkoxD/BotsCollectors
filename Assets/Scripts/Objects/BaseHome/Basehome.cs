@@ -94,12 +94,17 @@ public class Basehome : MonoBehaviour
 
     public void AddDrone(Drone drone)
     {
+        drone.ReturnedToBase += ReturnDrone;
+        drone.SetBasehomePosition(this);
         _drones.Add(drone);
-        ReturnDrone(drone);
+        _availableDrones.Enqueue(drone);
     }
 
-    public void ReturnDrone(Drone drone) =>
+    public void ReturnDrone(Drone drone)
+    {
+        AddResource(drone.GiveResource());
         _availableDrones.Enqueue(drone);
+    }
 
     public void AddResource(Resource resource)
     {
@@ -108,7 +113,7 @@ public class Basehome : MonoBehaviour
 
         resource.Delete();
         ResourceCount++;
-        _counter.Change(ResourceCount);
+        _counter.Add();
     }
 
     private void ReduceResources(int value)
@@ -117,14 +122,13 @@ public class Basehome : MonoBehaviour
             return;
 
         ResourceCount -= value;
-        _counter.Change(ResourceCount);
+        _counter.Reduce(value);
     }
 
     private void BuildDrone()
     {
         Vector3 position = GetRandomSpawnPosition();
         Drone drone = _spawnerDrone.GetInstance(position);
-        drone.SetBase(this);
         AddDrone(drone);
     }
 
@@ -134,7 +138,10 @@ public class Basehome : MonoBehaviour
         drone.DeliverNewBasehome(_flag, _spawnerBasehome);
 
         if (_drones.Contains(drone))
+        {
+            drone.ReturnedToBase -= ReturnDrone;
             _drones.Remove(drone);
+        }
 
         SetStateToBuildDrones();
     }

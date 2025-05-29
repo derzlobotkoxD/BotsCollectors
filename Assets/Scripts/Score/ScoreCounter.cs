@@ -5,14 +5,20 @@ public class ScoreCounter : MonoBehaviour
 {
     private int _value;
 
-    public event UnityAction<int> ScoreChanged;
+    public event UnityAction<int> Changed;
 
-    public void Change(int value)
+    public void Add()
+    {
+        _value++;
+        Changed?.Invoke(_value);
+    }
+
+    public void Reduce(int value)
     {
         if (value < 0)
             return;
 
-        _value = value;
-        ScoreChanged?.Invoke(_value);
+        _value -= value;
+        Changed?.Invoke(_value);
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Drone : MonoBehaviour
 {
@@ -11,8 +12,11 @@ public class Drone : MonoBehaviour
     [SerializeField] private Transform _cargoCompartment;
 
     private float _rayMaxDistance = 5f;
+    private float _resourceTransferDistance = 2;
     private Resource _resource;
-    private Basehome _basehome;
+    private Vector3 _basehomePosition;
+
+    public event UnityAction<Drone> ReturnedToBase;
 
     private void OnEnable()
     {
@@ -26,8 +30,8 @@ public class Drone : MonoBehaviour
         _animator.FinishedGoingUp -= MoveToBase;
     }
 
-    public void SetBase(Basehome baseHome) =>
-        _basehome = baseHome;
+    public void SetBasehomePosition(Basehome basehome) =>
+        _basehomePosition = basehome.transform.position;
 
     public void DeliverResource(Resource resource) =>
         StartCoroutine(GoToAction(resource.transform.position, TakeResource));
@@ -35,11 +39,18 @@ public class Drone : MonoBehaviour
     public void DeliverNewBasehome(Flag flag, SpawnerBasehome spawner) =>
         StartCoroutine(GoToFlag(flag, spawner));
 
+    public Resource GiveResource()
+    {
+        Resource resource = _resource;
+        _resource = null;
+        return resource;
+    }
+
     private void MoveToBase()
     {
-        Vector3 direction = (transform.position - _basehome.transform.position).normalized;
-        Vector3 targetPosition = _basehome.transform.position + direction * _basehome.RadiusSpawnZone;
-        StartCoroutine(GoToAction(targetPosition, PutIntoBaseHome));
+        Vector3 direction = (transform.position - _basehomePosition).normalized;
+        Vector3 targetPosition = _basehomePosition + direction * _resourceTransferDistance;
+        StartCoroutine(GoToAction(targetPosition, ReturnToBasehome));
     }
 
     private IEnumerator GoToAction(Vector3 target, Action action)
@@ -61,8 +72,8 @@ public class Drone : MonoBehaviour
         yield return GoTo(target);
 
         flag.Deactivate();
-        _basehome = spawner.GetInstance(target);
-        _basehome.AddDrone(this);
+        Basehome basehome = spawner.GetInstance(target);
+        basehome.AddDrone(this);
         _animator.Idle();
     }
 
@@ -118,16 +129,9 @@ public class Drone : MonoBehaviour
         _resource.transform.parent = _cargoCompartment;
     }
 
-    private void PutIntoBaseHome()
+    private void ReturnToBasehome()
     {
-        if (_resource != null)
-        {
-            _resource.transform.SetParent(null);
-            _basehome.AddResource(_resource);
-            _resource = null;
-        }
-
         _animator.Idle();
-        _basehome.ReturnDrone(this);
+        ReturnedToBase?.Invoke(this);
     }
 }
