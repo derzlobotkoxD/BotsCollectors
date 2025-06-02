@@ -3,22 +3,22 @@ using UnityEngine.Events;
 
 public class ScoreCounter : MonoBehaviour
 {
-    private int _value;
-
     public event UnityAction<int> Changed;
+
+    public int Value { get; private set; }
 
     public void Add()
     {
-        _value++;
-        Changed?.Invoke(_value);
+        Value++;
+        Changed?.Invoke(Value);
     }
 
-    public void Reduce(int value)
+    public void Reduce(int value, int currentAmount)
     {
-        if (value < 0)
+        if (value <= 0 || currentAmount - value < 0)
             return;
 
-        _value -= value;
-        Changed?.Invoke(_value);
+        Value -= value;
+        Changed?.Invoke(Value);
     }
 }

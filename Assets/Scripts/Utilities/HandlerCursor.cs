@@ -13,5 +13,5 @@ public class HandlerCursor : MonoBehaviour
     }
 
     private void Click() =>
-        _animator.SetTrigger(Constants.Animation.Click);
+        _animator.SetTrigger(AnimatorData.Parameters.Click);
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 public class FlagMover : MonoBehaviour
 {
     [SerializeField] private Selector _selector;
-    [SerializeField] private Camera _camera;
+    [SerializeField] private InputReader _inputReader;
     [SerializeField] private LayerMask _layerMask;
     [Range(0, 100)][SerializeField] private float _maxDistence = 70f;
 
@@ -21,13 +21,13 @@ public class FlagMover : MonoBehaviour
 
         while (IsEnabled)
         {
-            Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
+            Ray ray = _inputReader.GetCursorPositionRay();
 
             if (Physics.Raycast(ray, out RaycastHit hit, _maxDistence, _layerMask))
             {
                 flag.transform.position = hit.point;
 
-                if (Input.GetMouseButtonDown(0))
+                if (_inputReader.IsClick)
                 {
                     if (hit.transform.TryGetComponent(out Ground ground))
                         IsEnabled = false;

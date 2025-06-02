@@ -16,6 +16,5 @@ public class SpawnerResources : Spawner<Resource>
     {
         instance.Deleted += ReleaseInstance;
         base.ActivateInstance(instance);
-        instance.SetStartPosition(instance.transform.position);
     }
 }

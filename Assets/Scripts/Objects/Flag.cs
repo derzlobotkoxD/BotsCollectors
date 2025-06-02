@@ -21,7 +21,7 @@ public class Flag : MonoBehaviour
     }
 
     public void ChangeColor() =>
-        _animator.SetTrigger(Constants.Animation.Error);
+        _animator.SetTrigger(AnimatorData.Parameters.Error);
 
     public void Deactivate()
     {

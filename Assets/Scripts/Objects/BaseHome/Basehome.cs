@@ -5,6 +5,7 @@ using UnityEngine;
 public class Basehome : MonoBehaviour
 {
     [SerializeField] private int _startingDroneCount = 3;
+    [SerializeField] private int _minimumDrones = 1;
     [SerializeField] private int _priceBuildDrone = 3;
     [SerializeField] private int _priceBuildBasehome = 5;
     [SerializeField] private float _radiusSpawnZone = 1.5f;
@@ -26,13 +27,12 @@ public class Basehome : MonoBehaviour
     private State _stateBuildBasehome;
 
     public int ResourceCount { get; private set; } = 0;
-    public int CountDrones => _drones.Count;
-    public float RadiusSpawnZone => _radiusSpawnZone;
+    public bool CanBuildBasehome => _drones.Count > _minimumDrones;
 
     private void Awake()
     {
         _stateBuildDrones = new State(BuildDrone, _priceBuildDrone);
-        _stateBuildBasehome = new State(BuildBasehome, _priceBuildBasehome);
+        _stateBuildBasehome = new State(SendResourcesToBuildBasehome, _priceBuildBasehome);
         _currentState = _stateBuildDrones;
     }
 
@@ -52,8 +52,7 @@ public class Basehome : MonoBehaviour
             BuildDrone();
 
         _scanner.SetDatabaseOfResources(_databaseOfResources);
-        _scoreView.SetParentForText(_positionScore);
-        _scoreView.StartShow();
+        _scoreView.CreateText(_positionScore);
         _scanner.Activate();
     }
 
@@ -67,11 +66,9 @@ public class Basehome : MonoBehaviour
 
         if (_databaseOfResources.CountFoundResources > 0 && _availableDrones.Count > 0)
         {
-            if (_databaseOfResources.TryGetFoundResource(out Resource resource))
-            {
-                Drone drone = _availableDrones.Dequeue();
-                drone.DeliverResource(resource);
-            }
+            Resource resource = _databaseOfResources.GetResource();
+            Drone drone = _availableDrones.Dequeue();
+            drone.DeliverResource(resource);
         }
     }
 
@@ -112,17 +109,14 @@ public class Basehome : MonoBehaviour
             return;
 
         resource.Delete();
-        ResourceCount++;
         _counter.Add();
+        ResourceCount = _counter.Value;
     }
 
     private void ReduceResources(int value)
     {
-        if (value <= 0 || ResourceCount - value < 0)
-            return;
-
-        ResourceCount -= value;
-        _counter.Reduce(value);
+        _counter.Reduce(value, ResourceCount);
+        ResourceCount = _counter.Value;
     }
 
     private void BuildDrone()
@@ -132,10 +126,12 @@ public class Basehome : MonoBehaviour
         AddDrone(drone);
     }
 
-    private void BuildBasehome()
+    private void SendResourcesToBuildBasehome()
     {
         Drone drone = _availableDrones.Dequeue();
-        drone.DeliverNewBasehome(_flag, _spawnerBasehome);
+        drone.ReachedFlag += BuildBaseHome;
+
+        drone.DeliverResourcesToFlag(_flag);
 
         if (_drones.Contains(drone))
         {
@@ -144,6 +140,14 @@ public class Basehome : MonoBehaviour
         }
 
         SetStateToBuildDrones();
+    }
+
+    private void BuildBaseHome(Drone drone)
+    {
+        drone.ReachedFlag -= BuildBaseHome;
+        Basehome basehome = _spawnerBasehome.GetInstance(_flag.transform.position);
+        basehome.AddDrone(drone);
+        _flag.Deactivate();
     }
 
     private Vector3 GetRandomSpawnPosition()

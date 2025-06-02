@@ -8,10 +8,10 @@ public class SpawnZone : MonoBehaviour
     [SerializeField] private GeneraterSpawnPoint _generatorSpawnPoint;
     [SerializeField][Range(0.1f, 3f)] private float _delay = 1f;
     [SerializeField] private LayerMask _mask;
-    
-    private float _maxDistanceChecking = 10f;
+
+    private Vector3 _halfResourceSize = new Vector3(0.2f, 0.2f, 0.2f);
     private List<Vector3> _points;
-    private List<Vector3> _pointsTaken = new List<Vector3>();
+    private List<Vector3> _occupiedPoints = new List<Vector3>();
 
     private void Awake()
     {
@@ -30,25 +30,33 @@ public class SpawnZone : MonoBehaviour
     private void OnDisable() =>
         _spawner.ResourceReturned -= ReturnPointToAvailable;
 
-    private Vector3 GetRandomPosition()
+    private bool TryGetRandomPoint(out Vector3 point)
     {
+        point = default(Vector3);
+
+        if (_points.Count == 0)
+            return false;
+
         int currentPointIndex = Random.Range(0, _points.Count);
 
-        while (IsAvailablePoint(_points[currentPointIndex]))
+        while (IsOccupiedPoint(_points[currentPointIndex]))
         {
             _points.Remove(_points[currentPointIndex]);
             currentPointIndex = Random.Range(0, _points.Count);
+
+            if (_points.Count == 0)
+                return false;
         }
 
-        Vector3 point = _points[currentPointIndex];
-        _pointsTaken.Add(point);
+        point = _points[currentPointIndex];
         _points.Remove(point);
+        _occupiedPoints.Add(point);
 
-        return point;
+        return true;
     }
 
-    private bool IsAvailablePoint(Vector3 point) =>
-        Physics.Raycast(point, Vector3.down, _maxDistanceChecking, _mask, QueryTriggerInteraction.Collide);
+    private bool IsOccupiedPoint(Vector3 point) =>
+        Physics.CheckBox(point, _halfResourceSize, Quaternion.identity, _mask, QueryTriggerInteraction.Collide);
 
     private IEnumerator SpawnWithDelay(float delay)
     {
@@ -58,14 +66,17 @@ public class SpawnZone : MonoBehaviour
         {
             yield return wait;
 
-            if (_points.Count > 0)
-                _spawner.GetInstance(GetRandomPosition());
+            if (TryGetRandomPoint(out Vector3 point))
+            {
+                Resource resource = _spawner.GetInstance(point);
+                resource.SetStartPosition(point);
+            }
         }
     }
 
     private void ReturnPointToAvailable(Vector3 point)
     {
-        _pointsTaken.Remove(point);
+        _occupiedPoints.Remove(point);
         _points.Add(point);
     }
 }

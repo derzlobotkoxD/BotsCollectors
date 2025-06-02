@@ -14,32 +14,27 @@ public class DatabaseOfResources : MonoBehaviour
             resource.Deleted -= ReleaseResource;
     }
 
-    public bool TryGetFoundResource(out Resource resource)
+    public Resource GetResource()
     {
-        resource = _foundResources[0];
-
-        while (_occupiedResources.Contains(resource))
-        {
-            _foundResources.RemoveAt(0);
-
-            if (_foundResources.Count == 0)
-            {
-                resource = null;
-                return false;
-            }
-
-            resource = _foundResources[0];
-        }
-
+        Resource resource = _foundResources[0];
         OccupyResource(resource);
-        return true;
+        return resource;
     }
 
-    public void SetFoundResources(List<Resource> resources) =>
-        _foundResources = resources;
+    public void SetFoundResources(List<Resource> resources)
+    {
+        foreach (Resource resource in resources)
+        {
+            if (_foundResources.Contains(resource) || _occupiedResources.Contains(resource))
+                continue;
+
+            _foundResources.Add(resource);
+        }
+    }
 
     private void OccupyResource(Resource resource)
     {
+        _foundResources.Remove(resource);
         _occupiedResources.Add(resource);
         resource.Deleted += ReleaseResource;
     }
@@ -47,7 +42,6 @@ public class DatabaseOfResources : MonoBehaviour
     private void ReleaseResource(Resource resource)
     {
         _occupiedResources.Remove(resource);
-        _foundResources.Remove(resource);
         resource.Deleted -= ReleaseResource;
     }
 }

@@ -9,20 +9,19 @@ public class ScoreView : MonoBehaviour
     [SerializeField] private Vector3 _rotate;
 
     private TMP_Text _score;
-    private RectTransform _positionScore;
 
     private void OnEnable() =>
-        _scoreCounter.Changed += Change;
+        _scoreCounter.Changed += OnChange;
 
     private void OnDisable() =>
-        _scoreCounter.Changed -= Change;
+        _scoreCounter.Changed -= OnChange;
 
-    public void StartShow() =>
-        _score = Instantiate(_scorePrefab, transform.position + _offset, Quaternion.Euler(_rotate), _positionScore);
+    public void CreateText(RectTransform parent)
+    {
+        Vector3 position = transform.position + _offset;
+        _score = Instantiate(_scorePrefab, position, Quaternion.Euler(_rotate), parent);
+    }
 
-    public void SetParentForText(RectTransform position) =>
-        _positionScore = position;
-
-    private void Change(int value) =>
+    private void OnChange(int value) =>
         _score.text = value.ToString();
 }

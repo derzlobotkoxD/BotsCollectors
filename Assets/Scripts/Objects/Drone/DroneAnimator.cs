@@ -15,11 +15,11 @@ public class DroneAnimator : MonoBehaviour
         FinishedGoingUp?.Invoke();
 
     public void Take() =>
-        _animator.SetTrigger(Constants.Animation.Take);
+        _animator.SetTrigger(AnimatorData.Parameters.Take);
 
     public void Idle() =>
-        _animator.SetTrigger(Constants.Animation.Idle);
+        _animator.SetTrigger(AnimatorData.Parameters.Idle);
     
     public void Move() =>
-        _animator.SetTrigger(Constants.Animation.Move);
+        _animator.SetTrigger(AnimatorData.Parameters.Move);
 }

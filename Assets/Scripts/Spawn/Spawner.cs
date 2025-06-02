@@ -1,11 +1,11 @@
 using UnityEngine;
 using UnityEngine.Pool;
+using UnityEngine.UIElements;
 
 public abstract class Spawner<T> : MonoBehaviour where T : Component
 {
     [SerializeField] private T _prefab;
 
-    private Vector3 _spawnPoint;
     private ObjectPool<T> _pool;
     private int _defaultCapacitPool = 5;
     private int _maxSizePool = 5;
@@ -22,20 +22,16 @@ public abstract class Spawner<T> : MonoBehaviour where T : Component
             maxSize: _maxSizePool);
     }
 
-    public T GetInstance(Vector3 position) 
+    public T GetInstance(Vector3 position)
     {
-        _spawnPoint = position;
-        T resource = _pool.Get();
-
-        return resource;
+        T instance = _pool.Get();
+        instance.transform.position = position;
+        return instance;
     }
 
     protected virtual void ReleaseInstance(T instance) =>
         _pool.Release(instance);
 
-    protected virtual void ActivateInstance(T instance)
-    {
-        instance.transform.position = _spawnPoint;
+    protected virtual void ActivateInstance(T instance) =>
         instance.gameObject.SetActive(true);
-    }
 }

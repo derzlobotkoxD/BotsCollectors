@@ -22,8 +22,13 @@ public class Resource : MonoBehaviour
         Deleted?.Invoke(this);
     }
 
-    public void BecomeKinemetric() =>
+    public void Take(Transform parent)
+    {
         _rigidbody.isKinematic = true;
+        transform.parent = parent;
+        transform.position = parent.position;
+        transform.rotation = parent.rotation;
+    }
 
     public void SetStartPosition(Vector3 position) =>
         StartPosition = position;

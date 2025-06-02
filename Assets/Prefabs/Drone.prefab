@@ -14,6 +14,8 @@ GameObject:
   - component: {fileID: 4427054711713684234}
   - component: {fileID: 7223521808253819349}
   - component: {fileID: 2960041381762571204}
+  - component: {fileID: 7521219513042765166}
+  - component: {fileID: 7798190767500723772}
   m_Layer: 9
   m_Name: Drone
   m_TagString: Untagged
@@ -118,13 +120,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 480cb71fb092f294da37e026856d1d67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _moveSpeed: 10
-  _rotateSpeed: 4
-  _layerMask:
-    serializedVersion: 2
-    m_Bits: 128
   _animator: {fileID: 2960041381762571204}
-  _cargoCompartment: {fileID: 6444701087868122855}
+  _mover: {fileID: 7521219513042765166}
+  _baggage: {fileID: 178190171643585464}
+  _resourceDetector: {fileID: 7798190767500723772}
 --- !u!114 &2960041381762571204
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -138,6 +137,35 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animator: {fileID: 4427054711713684234}
+--- !u!114 &7521219513042765166
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2743398273240182167}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0bb57f3dce7da54eb1eacdf4863a52c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _moveSpeed: 10
+  _rotateSpeed: 5
+--- !u!114 &7798190767500723772
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2743398273240182167}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7fab6fea27325d48b428505e36e7ddc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _layerMask:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!1 &4720715881744929394
 GameObject:
   m_ObjectHideFlags: 0
@@ -147,6 +175,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6444701087868122855}
+  - component: {fileID: 178190171643585464}
   m_Layer: 0
   m_Name: CargoCompartment
   m_TagString: Untagged
@@ -162,13 +191,25 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4720715881744929394}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0.7069834, y: 0, z: 0, w: 0.7072302}
   m_LocalPosition: {x: 0, y: 0, z: -0.0328}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4619461341412089825}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 89.98, y: 0, z: 0}
+--- !u!114 &178190171643585464
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4720715881744929394}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fadb402e6c65ab44bafe63d89f2eed22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &5156945792001980426
 PrefabInstance:
   m_ObjectHideFlags: 0
