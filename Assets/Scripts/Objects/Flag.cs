@@ -25,8 +25,10 @@ public class Flag : MonoBehaviour
     public void ChangeColor() =>
         _animator.SetTrigger(AnimatorData.Parameters.Error);
 
-    public void Deactivate()
+    public void Deactivate(BasehomeBuilder builder)
     {
+        builder.Builded -= Deactivate;
+
         if (_isMoving == false)
             gameObject.SetActive(false);
     }
