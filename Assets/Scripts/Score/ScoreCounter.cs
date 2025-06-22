@@ -13,12 +13,12 @@ public class ScoreCounter : MonoBehaviour
         Changed?.Invoke(Value);
     }
 
-    public void Reduce(int value, int currentAmount)
+    public void Reduce(int subtrahend)
     {
-        if (value <= 0 || currentAmount - value < 0)
+        if (subtrahend <= 0 || Value > subtrahend)
             return;
 
-        Value -= value;
+        Value -= subtrahend;
         Changed?.Invoke(Value);
     }
 }

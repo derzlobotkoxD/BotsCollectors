@@ -3,10 +3,11 @@ using UnityEngine;
 public class HandlerCursor : MonoBehaviour
 {
     [SerializeField] private Animator _animator;
+    [SerializeField] private InputReader _inputReader;
 
     private void Update()
     {
-        transform.position = Input.mousePosition;
+        transform.position = _inputReader.GetMousePosition();
 
         if (Input.GetMouseButtonDown(0))
             Click();

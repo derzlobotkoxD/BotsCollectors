@@ -7,14 +7,16 @@ public class Flag : MonoBehaviour
     [SerializeField] private Animator _animator;
     [SerializeField] private Collider _noSpawnZone;
 
+    private FlagMover _mover;
     private bool _isMoving = false;
 
     public event Action Located;
 
-    public void Activate(FlagMover flagMover)
+    public void Activate()
     {
-        flagMover.Error += ChangeColor;
-        flagMover.Stopped += Set;
+        _mover.StartMove(transform);
+        _mover.Error += ChangeColor;
+        _mover.Stopped += Set;
         gameObject.SetActive(true);
         _isMoving = true;
         _noSpawnZone.enabled = false;
@@ -28,6 +30,9 @@ public class Flag : MonoBehaviour
         if (_isMoving == false)
             gameObject.SetActive(false);
     }
+
+    public void SetMover(FlagMover mover) =>
+        _mover = mover;
 
     private void Set(FlagMover flagMover)
     {

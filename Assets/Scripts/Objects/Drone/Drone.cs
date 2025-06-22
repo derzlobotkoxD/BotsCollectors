@@ -33,10 +33,10 @@ public class Drone : MonoBehaviour
     public void SetBasehomePosition(Basehome basehome) =>
         _basehomePosition = basehome.transform.position;
 
-    public void DeliverResource(Resource resource) =>
+    public void DeliveResource(Resource resource) =>
         StartCoroutine(GoToAction(resource.transform.position, TakeResource));
 
-    public void DeliverResourcesToFlag(Flag flag) =>
+    public void DeliveResourcesToFlag(Flag flag) =>
         StartCoroutine(GoToAction(flag.transform.position, ParkAtFlag));
 
     public Resource GiveResource() =>

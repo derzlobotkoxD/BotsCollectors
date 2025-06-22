@@ -10,5 +10,8 @@ public class InputReader : MonoBehaviour
         IsClick = Input.GetMouseButtonDown(0);
 
     public Ray GetCursorPositionRay() =>
-        _camera.ScreenPointToRay(Input.mousePosition);
-}
+        _camera.ScreenPointToRay(GetMousePosition());
+
+    public Vector3 GetMousePosition() =>
+        Input.mousePosition;
+ }

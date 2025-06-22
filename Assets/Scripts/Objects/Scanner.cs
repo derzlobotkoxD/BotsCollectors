@@ -9,25 +9,21 @@ public class Scanner : MonoBehaviour
     [SerializeField] private ParticleSystem _effect;
     [SerializeField] private LayerMask _layerMask;
 
-    private DatabaseOfResources _databaseOfResources;
     private Coroutine _coroutine;
 
-    public void Activate()
+    public void Activate(DatabaseOfResources database)
     {
         if (_coroutine == null)
-            _coroutine = StartCoroutine(Scan());
+            _coroutine = StartCoroutine(Scan(database));
     }
 
-    public void SetDatabaseOfResources(DatabaseOfResources database) =>
-        _databaseOfResources = database;
-
-    private IEnumerator Scan()
+    private IEnumerator Scan(DatabaseOfResources database)
     {
         WaitForSeconds wait = new WaitForSeconds(_cooldown);
 
         while (enabled)
         {
-            _databaseOfResources.SetFoundResources(SearchResources());
+            database.SetFoundResources(SearchResources());
             yield return wait;
         }
     }

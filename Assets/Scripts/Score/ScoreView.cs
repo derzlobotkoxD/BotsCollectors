@@ -11,10 +11,10 @@ public class ScoreView : MonoBehaviour
     private TMP_Text _score;
 
     private void OnEnable() =>
-        _scoreCounter.Changed += OnChange;
+        _scoreCounter.Changed += OnChanged;
 
     private void OnDisable() =>
-        _scoreCounter.Changed -= OnChange;
+        _scoreCounter.Changed -= OnChanged;
 
     public void CreateText(RectTransform parent)
     {
@@ -22,6 +22,6 @@ public class ScoreView : MonoBehaviour
         _score = Instantiate(_scorePrefab, position, Quaternion.Euler(_rotate), parent);
     }
 
-    private void OnChange(int value) =>
+    private void OnChanged(int value) =>
         _score.text = value.ToString();
 }

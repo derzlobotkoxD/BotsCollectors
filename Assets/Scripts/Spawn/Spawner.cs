@@ -10,7 +10,10 @@ public abstract class Spawner<T> : MonoBehaviour where T : Component
     private int _defaultCapacitPool = 5;
     private int _maxSizePool = 5;
 
-    private void Awake()
+    protected virtual void Awake() =>
+        CreatePool();
+
+    private void CreatePool()
     {
         _pool = new ObjectPool<T>(
             createFunc: () => Instantiate(_prefab),
